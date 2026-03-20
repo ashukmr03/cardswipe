@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { CreditCard } from '../types';
 
 const STORAGE_KEY = 'cardswipe_wallet';
@@ -12,31 +12,37 @@ function loadCards(): CreditCard[] {
   }
 }
 
-function saveCards(cards: CreditCard[]): void {
+function persist(cards: CreditCard[]): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
 }
 
 export function useWallet() {
   const [cards, setCards] = useState<CreditCard[]>(loadCards);
 
-  useEffect(() => {
-    saveCards(cards);
-  }, [cards]);
-
   const hasCards = cards.length > 0;
 
   function addCard(card: CreditCard): void {
-    setCards(prev => [...prev, card]);
+    setCards(prev => {
+      const updated = [...prev, card];
+      persist(updated);
+      return updated;
+    });
   }
 
   function removeCard(id: string): void {
-    setCards(prev => prev.filter(c => c.id !== id));
+    setCards(prev => {
+      const updated = prev.filter(c => c.id !== id);
+      persist(updated);
+      return updated;
+    });
   }
 
   function updateCard(id: string, updates: Partial<CreditCard>): void {
-    setCards(prev =>
-      prev.map(c => (c.id === id ? { ...c, ...updates } : c))
-    );
+    setCards(prev => {
+      const updated = prev.map(c => (c.id === id ? { ...c, ...updates } : c));
+      persist(updated);
+      return updated;
+    });
   }
 
   return { cards, hasCards, addCard, removeCard, updateCard };
