@@ -3,10 +3,13 @@ import type { CreditCard } from '../../types';
 import { PRESET_CARDS } from '../../data/presetCards';
 import { PresetCardList } from './PresetCardList';
 import { CustomCardForm } from './CustomCardForm';
-import { useWallet } from '../../hooks/useWallet';
 
-export function OnboardingScreen() {
-  const { addCard } = useWallet();
+interface OnboardingScreenProps {
+  onAddCard: (card: CreditCard) => void;
+}
+
+export function OnboardingScreen({ onAddCard }: OnboardingScreenProps) {
+  const addCard = onAddCard;
   const [selected, setSelected] = useState<string[]>([]);
   const [showCustomForm, setShowCustomForm] = useState(false);
 

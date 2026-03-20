@@ -19,9 +19,9 @@ function MainApp() {
 }
 
 function App() {
-  const { hasCards } = useWallet();
+  const { hasCards, addCard } = useWallet();
 
-  return hasCards ? <MainApp /> : <OnboardingScreen />;
+  return hasCards ? <MainApp /> : <OnboardingScreen onAddCard={addCard} />;
 }
 
 export default App;
